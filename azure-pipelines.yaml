@@ -67,91 +67,91 @@ stages:
 # #                       Build Fake App                             #
 # ####################################################################
 
-- stage: BuildFakeRestAPI
-  jobs:
-  - job: 'BuildFakeapp'
-    displayName: 'Build Fake app Rest API'
-    pool:
-      name: myAgentPool
-      vmImage: 'ubuntu-18.04'
-    steps:
-    - task: ArchiveFiles@2
-      displayName: 'Archive FakeRestAPI'
-      inputs:
-        rootFolderOrFile: '$(System.DefaultWorkingDirectory)/automatedtesting/fakerestapi'
-        includeRootFolder: false
-        archiveType: 'zip'
-        archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId)-fakerestapi.zip'
-    - publish: $(Build.ArtifactStagingDirectory)/$(Build.BuildId)-fakerestapi.zip
-      displayName: 'Upload Package'
-      artifact: fakerestapi
+# - stage: BuildFakeRestAPI
+#   jobs:
+#   - job: 'BuildFakeapp'
+#     displayName: 'Build Fake app Rest API'
+#     pool:
+#       name: myAgentPool
+#       vmImage: 'ubuntu-18.04'
+#     steps:
+#     - task: ArchiveFiles@2
+#       displayName: 'Archive FakeRestAPI'
+#       inputs:
+#         rootFolderOrFile: '$(System.DefaultWorkingDirectory)/automatedtesting/fakerestapi'
+#         includeRootFolder: false
+#         archiveType: 'zip'
+#         archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId)-fakerestapi.zip'
+#     - publish: $(Build.ArtifactStagingDirectory)/$(Build.BuildId)-fakerestapi.zip
+#       displayName: 'Upload Package'
+#       artifact: fakerestapi
 
 # ####################################################################
 # #                       Deploy Fake App                            #
 # ####################################################################
-- stage: DeployFakeApp
-  dependsOn: BuildFakeRestAPI
-  condition: succeeded()
-  jobs:
-  - deployment: FakeRestAPI
-    pool:
-      vmImage: 'Ubuntu-16.04'
-      name: myAgentPool
-    environment: 'DEV'
-    strategy:
-      runOnce:
-        deploy:
-          steps:
-          - task: AzureWebApp@1
-            displayName: 'Deploy Azure Web App'
-            inputs:
-              azureSubscription: $(azureServiceConnectionId)
-              appName: $(webAppName)
-              appType: webApp
-              package: $(Pipeline.Workspace)/fakerestapi/$(Build.BuildId)-fakerestapi.zip
+# - stage: DeployFakeApp
+#   dependsOn: BuildFakeRestAPI
+#   condition: succeeded()
+#   jobs:
+#   - deployment: FakeRestAPI
+#     pool:
+#       vmImage: 'Ubuntu-16.04'
+#       name: myAgentPool
+#     environment: 'DEV'
+#     strategy:
+#       runOnce:
+#         deploy:
+#           steps:
+#           - task: AzureWebApp@1
+#             displayName: 'Deploy Azure Web App'
+#             inputs:
+#               azureSubscription: $(azureServiceConnectionId)
+#               appName: $(webAppName)
+#               appType: webApp
+#               package: $(Pipeline.Workspace)/fakerestapi/$(Build.BuildId)-fakerestapi.zip
             
 ####################################################################
 #                       Build Test   zip                           #
 ####################################################################
-# - stage: Build
-  # jobs:
-  # - job: Build
-  #   pool:
-  #     vmImage: 'ubuntu-latest'
-  #     name: 'myAgentPool'
-  #   steps:
-  #   - task: ArchiveFiles@2
-  #     displayName: 'Archive Selenium tests'
-  #     inputs:
-  #       rootFolderOrFile: '$(System.DefaultWorkingDirectory)/automatedtesting/selenium'
-  #       includeRootFolder: false
-  #       archiveType: 'zip'
-  #       archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId)-selenium-tests.zip'
-  #   - publish: $(Build.ArtifactStagingDirectory)/$(Build.BuildId)-selenium-tests.zip
-  #     displayName: 'Upload Selenium Tests'
-  #     artifact: selenium
+- stage: Build
+  jobs:
+  - job: Build
+    pool:
+      vmImage: 'ubuntu-latest'
+      name: 'myAgentPool'
+    steps:
+    - task: ArchiveFiles@2
+      displayName: 'Archive Selenium tests'
+      inputs:
+        rootFolderOrFile: '$(System.DefaultWorkingDirectory)/automatedtesting/selenium'
+        includeRootFolder: false
+        archiveType: 'zip'
+        archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId)-selenium-tests.zip'
+    - publish: $(Build.ArtifactStagingDirectory)/$(Build.BuildId)-selenium-tests.zip
+      displayName: 'Upload Selenium Tests'
+      artifact: selenium
 
-    # - task: ArchiveFiles@2
-    #   displayName: 'Archive Postman tests'
-    #   inputs:
-    #     rootFolderOrFile: '$(System.DefaultWorkingDirectory)/automatedtesting/postman'
-    #     includeRootFolder: false
-    #     archiveType: 'zip'
-    #     archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId)-postman-tests.zip'
-    # - publish: $(Build.ArtifactStagingDirectory)/$(Build.BuildId)-postman-tests.zip
-    #   displayName: 'Upload Postman Tests'
-    #   artifact: postman
+    - task: ArchiveFiles@2
+      displayName: 'Archive Postman tests'
+      inputs:
+        rootFolderOrFile: '$(System.DefaultWorkingDirectory)/automatedtesting/postman'
+        includeRootFolder: false
+        archiveType: 'zip'
+        archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId)-postman-tests.zip'
+    - publish: $(Build.ArtifactStagingDirectory)/$(Build.BuildId)-postman-tests.zip
+      displayName: 'Upload Postman Tests'
+      artifact: postman
 
-    # - task: ArchiveFiles@2
-    #   displayName: 'Archive Jmeter tests'
-    #   inputs:
-    #     rootFolderOrFile: '$(System.DefaultWorkingDirectory)/automatedtesting/jmeter'
-    #     includeRootFolder: false
-    #     archiveType: 'zip'
-    #     archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId)-jmeter-tests.zip'
-    # - publish: $(Build.ArtifactStagingDirectory)/$(Build.BuildId)-jmeter-tests.zip
-    #   displayName: 'Upload JMeter Tests'
-    #   artifact: jmeter
+    - task: ArchiveFiles@2
+      displayName: 'Archive Jmeter tests'
+      inputs:
+        rootFolderOrFile: '$(System.DefaultWorkingDirectory)/automatedtesting/jmeter'
+        includeRootFolder: false
+        archiveType: 'zip'
+        archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId)-jmeter-tests.zip'
+    - publish: $(Build.ArtifactStagingDirectory)/$(Build.BuildId)-jmeter-tests.zip
+      displayName: 'Upload JMeter Tests'
+      artifact: jmeter
 
 ####################################################################
 #                            Run Test                              #
