@@ -44,7 +44,7 @@ stages:
                   cd terraform
                   terraform init
 
-#           ######### Step 2: Initialise workspace using terraform init ##########
+           ######### Step 2: Initialise workspace using terraform init ##########
             
             - task: TerraformCLI@0
               inputs:
@@ -52,7 +52,7 @@ stages:
                 workingDirectory: '$(System.DefaultWorkingDirectory)/terraform'
                 allowTelemetryCollection: true
 
-#             ######### Step 3: Deploy Webapp terraform apply ##########
+             ######### Step 3: Deploy Webapp terraform apply ##########
             - task: Bash@3
               displayName: apply terraform
               inputs:
