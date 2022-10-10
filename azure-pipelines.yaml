@@ -63,95 +63,95 @@ stages:
                   terraform apply -auto-approve
 
 
-# ####################################################################
-# #                       Build Fake App                             #
-# ####################################################################
+####################################################################
+#                       Build Fake App                             #
+####################################################################
 
-# - stage: BuildFakeRestAPI
-#   jobs:
-#   - job: 'BuildFakeapp'
-#     displayName: 'Build Fake app Rest API'
-#     pool:
-#       name: myAgentPool
-#       vmImage: 'ubuntu-18.04'
-#     steps:
-#     - task: ArchiveFiles@2
-#       displayName: 'Archive FakeRestAPI'
-#       inputs:
-#         rootFolderOrFile: '$(System.DefaultWorkingDirectory)/automatedtesting/fakerestapi'
-#         includeRootFolder: false
-#         archiveType: 'zip'
-#         archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId)-fakerestapi.zip'
-#     - publish: $(Build.ArtifactStagingDirectory)/$(Build.BuildId)-fakerestapi.zip
-#       displayName: 'Upload Package'
-#       artifact: fakerestapi
+- stage: BuildFakeRestAPI
+  jobs:
+  - job: 'BuildFakeapp'
+    displayName: 'Build Fake app Rest API'
+    pool:
+      name: myAgentPool
+      vmImage: 'ubuntu-18.04'
+    steps:
+    - task: ArchiveFiles@2
+      displayName: 'Archive FakeRestAPI'
+      inputs:
+        rootFolderOrFile: '$(System.DefaultWorkingDirectory)/automatedtesting/fakerestapi'
+        includeRootFolder: false
+        archiveType: 'zip'
+        archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId)-fakerestapi.zip'
+    - publish: $(Build.ArtifactStagingDirectory)/$(Build.BuildId)-fakerestapi.zip
+      displayName: 'Upload Package'
+      artifact: fakerestapi
 
-# ####################################################################
-# #                       Deploy Fake App                            #
-# ####################################################################
-# - stage: DeployFakeApp
-#   dependsOn: BuildFakeRestAPI
-#   condition: succeeded()
-#   jobs:
-#   - deployment: FakeRestAPI
-#     pool:
-#       vmImage: 'Ubuntu-16.04'
-#       name: myAgentPool
-#     environment: 'DEV'
-#     strategy:
-#       runOnce:
-#         deploy:
-#           steps:
-#           - task: AzureWebApp@1
-#             displayName: 'Deploy Azure Web App'
-#             inputs:
-#               azureSubscription: $(azureServiceConnectionId)
-#               appName: $(webAppName)
-#               appType: webApp
-#               package: $(Pipeline.Workspace)/fakerestapi/$(Build.BuildId)-fakerestapi.zip
+####################################################################
+#                       Deploy Fake App                            #
+####################################################################
+- stage: DeployFakeApp
+  dependsOn: BuildFakeRestAPI
+  condition: succeeded()
+  jobs:
+  - deployment: FakeRestAPI
+    pool:
+      vmImage: 'Ubuntu-16.04'
+      name: myAgentPool
+    environment: 'DEV'
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - task: AzureWebApp@1
+            displayName: 'Deploy Azure Web App'
+            inputs:
+              azureSubscription: $(azureServiceConnectionId)
+              appName: $(webAppName)
+              appType: webApp
+              package: $(Pipeline.Workspace)/fakerestapi/$(Build.BuildId)-fakerestapi.zip
             
 ####################################################################
 #                       Build Test   zip                           #
 ####################################################################
-- stage: Build
-  jobs:
-  - job: Build
-    pool:
-      vmImage: 'ubuntu-latest'
-      name: 'myAgentPool'
-    steps:
-    - task: ArchiveFiles@2
-      displayName: 'Archive Selenium tests'
-      inputs:
-        rootFolderOrFile: '$(System.DefaultWorkingDirectory)/automatedtesting/selenium'
-        includeRootFolder: false
-        archiveType: 'zip'
-        archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId)-selenium-tests.zip'
-    - publish: $(Build.ArtifactStagingDirectory)/$(Build.BuildId)-selenium-tests.zip
-      displayName: 'Upload Selenium Tests'
-      artifact: selenium
+# - stage: Build
+#   jobs:
+#   - job: Build
+#     pool:
+#       vmImage: 'ubuntu-latest'
+#       name: 'myAgentPool'
+#     steps:
+#     - task: ArchiveFiles@2
+#       displayName: 'Archive Selenium tests'
+#       inputs:
+#         rootFolderOrFile: '$(System.DefaultWorkingDirectory)/automatedtesting/selenium'
+#         includeRootFolder: false
+#         archiveType: 'zip'
+#         archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId)-selenium-tests.zip'
+#     - publish: $(Build.ArtifactStagingDirectory)/$(Build.BuildId)-selenium-tests.zip
+#       displayName: 'Upload Selenium Tests'
+#       artifact: selenium
 
-    - task: ArchiveFiles@2
-      displayName: 'Archive Postman tests'
-      inputs:
-        rootFolderOrFile: '$(System.DefaultWorkingDirectory)/automatedtesting/postman'
-        includeRootFolder: false
-        archiveType: 'zip'
-        archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId)-postman-tests.zip'
-    - publish: $(Build.ArtifactStagingDirectory)/$(Build.BuildId)-postman-tests.zip
-      displayName: 'Upload Postman Tests'
-      artifact: postman
+    # - task: ArchiveFiles@2
+    #   displayName: 'Archive Postman tests'
+    #   inputs:
+    #     rootFolderOrFile: '$(System.DefaultWorkingDirectory)/automatedtesting/postman'
+    #     includeRootFolder: false
+    #     archiveType: 'zip'
+    #     archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId)-postman-tests.zip'
+    # - publish: $(Build.ArtifactStagingDirectory)/$(Build.BuildId)-postman-tests.zip
+    #   displayName: 'Upload Postman Tests'
+    #   artifact: postman
 
-    - task: ArchiveFiles@2
-      displayName: 'Archive Jmeter tests'
-      inputs:
-        rootFolderOrFile: '$(System.DefaultWorkingDirectory)/automatedtesting/jmeter'
-        includeRootFolder: false
-        archiveType: 'zip'
-        archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId)-jmeter-tests.zip'
-    - publish: $(Build.ArtifactStagingDirectory)/$(Build.BuildId)-jmeter-tests.zip
-      displayName: 'Upload JMeter Tests'
-      artifact: jmeter
+    # - task: ArchiveFiles@2
+    #   displayName: 'Archive Jmeter tests'
+    #   inputs:
+    #     rootFolderOrFile: '$(System.DefaultWorkingDirectory)/automatedtesting/jmeter'
+    #     includeRootFolder: false
+    #     archiveType: 'zip'
+    #     archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId)-jmeter-tests.zip'
+    # - publish: $(Build.ArtifactStagingDirectory)/$(Build.BuildId)-jmeter-tests.zip
+    #   displayName: 'Upload JMeter Tests'
+    #   artifact: jmeter
 
 ####################################################################
 #                            Run Test                              #
@@ -188,11 +188,11 @@ stages:
 #                 sudo python3 -m pip install --upgrade pip
 #                 sudo pip3 install selenium==3.141.0
 
-#                 # selenium==3.141.0
-#                 # sudo pip3 install 
-#                 # export PATH=$PATH:/usr/lib/chromium-browser/
-#                 # cd $(Pipeline.Workspace)/selenium
-#                 # unzip -o $(Pipeline.Workspace)/selenium/$(Build.BuildId)-selenium-tests -d .
+#                 selenium==3.141.0
+#                 sudo pip3 install 
+#                 export PATH=$PATH:/usr/lib/chromium-browser/
+#                 cd $(Pipeline.Workspace)/selenium
+#                 unzip -o $(Pipeline.Workspace)/selenium/$(Build.BuildId)-selenium-tests -d .
 #           - bash: |
 #               cd $(Pipeline.Workspace)/s/automatedtesting/selenium
 #               rm -rf seleniumtestrun.log
@@ -203,21 +203,21 @@ stages:
 #               sudo cat seleniumtestrun.log
 #               sudo cp seleniumtestrun.log /var/log/selenium
 #             displayName: Run Selenium Test-Suite
-          # - task: PublishPipelineArtifact@1
-          #   displayName: Publish Selenium Result logs
-          #   inputs:
-          #     targetPath: '$(Pipeline.Workspace)/selenium/selenium-result.log'
-          #     artifactName: 'SeleniumTestResult'
-          # - task: Bash@3
-          #   displayName: 'Run Selenium Tests'
-          #   inputs:
-          #     targetType: 'inline'
-          #     script: |
-          #       # python3.7 /home/myagent/myagent/_work/1/selenium/login.py > /home/myagent/myagent/_work/1/selenium/seleniumtestrun.log
-          #       sudo python3 /home/myagent/myagent/_work/1/selenium/login.py > seleniumtestrun.log
-          #       sudo cp /home/myagent/myagent/_work/1/selenium/seleniumtestrun.log /var/log
-          #       echo "copy log ---------------------------"
-          #       sudo cat /var/log/seleniumtestrun.log
+#           - task: PublishPipelineArtifact@1
+#             displayName: Publish Selenium Result logs
+#             inputs:
+#               targetPath: '$(Pipeline.Workspace)/selenium/selenium-result.log'
+#               artifactName: 'SeleniumTestResult'
+#           - task: Bash@3
+#             displayName: 'Run Selenium Tests'
+#             inputs:
+#               targetType: 'inline'
+#               script: |
+#                 # python3.7 /home/myagent/myagent/_work/1/selenium/login.py > /home/myagent/myagent/_work/1/selenium/seleniumtestrun.log
+#                 sudo python3 /home/myagent/myagent/_work/1/selenium/login.py > seleniumtestrun.log
+#                 sudo cp /home/myagent/myagent/_work/1/selenium/seleniumtestrun.log /var/log
+#                 echo "copy log ---------------------------"
+#                 sudo cat /var/log/seleniumtestrun.log
           # ####################################################################
           # #                       Postman  Test                              #
           # ####################################################################
