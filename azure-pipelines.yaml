@@ -167,10 +167,10 @@ stages:
     strategy:
       runOnce:
         deploy:
-          steps:
-          - download: current
-            displayName: Download selenium
-            artifact: selenium 
+          # steps:
+          # - download: current
+          #   displayName: Download selenium
+          #   artifact: selenium 
           ####################################################################
           #                       Selenium Test                              #
           ####################################################################
